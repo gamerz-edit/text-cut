@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advanced Text Match Cut</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg, linear-gradient(to right, #fdfdfd, #e8f0fe));
+      color: var(--fg, #000);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      min-height: 100vh;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .input-group {
+      margin-bottom: 1rem;
+      width: 100%;
+      max-width: 500px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      background: #0066ff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      margin: 0.25rem;
+    }
+    #animationBox {
+      margin-top: 2rem;
+      height: 150px;
+      font-size: 2rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      border-radius: 12px;
+      transition: all 0.5s ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    #preview {
+      text-align: center;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Advanced Text Match Cut Generator</h1>
+
+  <div class="input-group">
+    <input id="text1" type="text" placeholder="Enter first text">
+    <input id="text2" type="text" placeholder="Enter second text">
+
+    <label for="animationType">Animation Style:</label>
+    <select id="animationType">
+      <option value="fade">Fade</option>
+      <option value="scale">Scale</option>
+      <option value="slide">Slide</option>
+      <option value="rotate">Rotate</option>
+      <option value="flip">Flip</option>
+      <option value="bounce">Bounce</option>
+    </select>
+
+    <label for="fontStyle">Font:</label>
+    <select id="fontStyle">
+      <option value="Segoe UI">Segoe UI</option>
+      <option value="Arial">Arial</option>
+      <option value="Courier New">Courier New</option>
+      <option value="Georgia">Georgia</option>
+      <option value="Comic Sans MS">Comic Sans</option>
+    </select>
+
+    <label for="textColor">Text Color:</label>
+    <input type="color" id="textColor" value="#000000">
+    <label for="bgColor">Background Color:</label>
+    <input type="color" id="bgColor" value="#ffffff">
+
+    <label for="themeSelect">Theme:</label>
+    <select id="themeSelect" onchange="changeTheme(this.value)">
+      <option value="default">Default</option>
+      <option value="dark">Dark</option>
+      <option value="sunset">Sunset</option>
+      <option value="mint">Mint</option>
+    </select>
+
+    <button onclick="startMatchCut()">Create Match Cut</button>
+    <button onclick="downloadImage()">Download Image</button>
+    <button onclick="resetFields()">Reset</button>
+  </div>
+
+  <div id="preview">
+    <div id="animationBox"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <script>
+    const animationBox = document.getElementById('animationBox');
+
+    function startMatchCut() {
+      const text1 = document.getElementById('text1').value;
+      const text2 = document.getElementById('text2').value;
+      const animationType = document.getElementById('animationType').value;
+      const fontStyle = document.getElementById('fontStyle').value;
+      const textColor = document.getElementById('textColor').value;
+      const bgColor = document.getElementById('bgColor').value;
+
+      animationBox.style.fontFamily = fontStyle;
+      animationBox.style.color = textColor;
+      animationBox.style.backgroundColor = bgColor;
+
+      animationBox.textContent = text1;
+      animationBox.style.opacity = 1;
+      animationBox.style.transform = 'none';
+
+      setTimeout(() => {
+        switch (animationType) {
+          case 'fade':
+            animationBox.style.opacity = 0;
+            break;
+          case 'scale':
+            animationBox.style.transform = 'scale(0.5)';
+            break;
+          case 'slide':
+            animationBox.style.transform = 'translateX(-100%)';
+            break;
+          case 'rotate':
+            animationBox.style.transform = 'rotate(180deg)';
+            break;
+          case 'flip':
+            animationBox.style.transform = 'rotateY(180deg)';
+            break;
+          case 'bounce':
+            animationBox.style.transform = 'translateY(-50px)';
+            break;
+        }
+
+        setTimeout(() => {
+          animationBox.textContent = text2;
+          animationBox.style.opacity = 1;
+          animationBox.style.transform = 'none';
+        }, 500);
+      }, 1000);
+    }
+
+    function downloadImage() {
+      html2canvas(animationBox).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'matchcut.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+
+    function resetFields() {
+      document.getElementById('text1').value = '';
+      document.getElementById('text2').value = '';
+      animationBox.textContent = '';
+      animationBox.style.opacity = 1;
+      animationBox.style.transform = 'none';
+    }
+
+    function changeTheme(theme) {
+      const root = document.documentElement.style;
+      switch(theme) {
+        case 'dark':
+          root.setProperty('--bg', '#111');
+          root.setProperty('--fg', '#f0f0f0');
+          break;
+        case 'sunset':
+          root.setProperty('--bg', 'linear-gradient(to right, #ffafbd, #ffc3a0)');
+          root.setProperty('--fg', '#000');
+          break;
+        case 'mint':
+          root.setProperty('--bg', 'linear-gradient(to right, #c2e9fb, #a1c4fd)');
+          root.setProperty('--fg', '#003366');
+          break;
+        default:
+          root.setProperty('--bg', 'linear-gradient(to right, #fdfdfd, #e8f0fe)');
+          root.setProperty('--fg', '#000');
+      }
+    }
+  </script>
+
+</body>
+</html>
